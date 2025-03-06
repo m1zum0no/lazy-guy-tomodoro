@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Pomodoro</title>
+		<link rel="stylesheet" href="style.css" />
+		<link rel="apple-touch-icon" sizes="180x180" href="./icons/appletouch.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon.png" />
+		<meta name="theme-color" id="theme-meta" content="#222233" />
+		<script src="https://telegram.org/js/telegram-web-app.js?56"></script>
+	</head>
+	<body>
+		<button id="menubtn" title="Open Settings"></button>
+		<div id="taskswitcher">
+			<button id="statbtn" title="View Statistics">
+				<span id="statline1"></span>
+				<span id="statline2"></span>
+				<span id="statline3"></span>
+			</button>
+			<select name="task" id="task-select" title="Switch Task"></select>
+			<div id="no-task-title" title="No Task Found">Tomodoro</div>
+			<button id="managetaskbtn" title="Manage Task">
+				<svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+					<path
+						d="M6 34.5V42h7.5l22.13-22.13-7.5-7.5L6 34.5zm35.41-20.41c.78-.78.78-2.05 0-2.83l-4.67-4.67c-.78-.78-2.05-.78-2.83 0l-3.66 3.66 7.5 7.5 3.66-3.66z"
+					/>
+				</svg>
+			</button>
+		</div>
+		<main id="main">
+			<div id="timer" class="t-focus">
+				<svg id="ring" viewbox="0 0 100 100">
+					<circle id="secondary" cx="50" cy="50" r="48" fill="none" />
+					<circle id="progress" cx="50" cy="50" r="48" fill="none" pathlength="100" />
+				</svg>
+				<div id="time"></div>
+
+				<div id="status">
+					<span id="s-focus">FOCUS</span>
+					<span id="s-short">SHORT BREAK</span>
+					<span id="s-long">LONG BREAK</span>
+				</div>
+				<button id="pauseplay" class="paused" title="Start Timer">
+					<svg id="playing" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+						<path
+							d="M18 32h4V16h-4v16zm6-28C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm0 36c-8.82 0-16-7.18-16-16S15.18 8 24 8s16 7.18 16 16-7.18 16-16 16zm2-8h4V16h-4v16z"
+						/>
+					</svg>
+					<svg id="paused" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+						<path
+							d="M20 33l12-9-12-9v18zm4-29C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm0 36c-8.82 0-16-7.18-16-16S15.18 8 24 8s16 7.18 16 16-7.18 16-16 16z"
+						/>
+					</svg>
+				</button>
+			</div>
+			<button id="resetround" title="Reset Current Timer">
+				<svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+					<path d="M12 12h4v24h-4zm7 12l17 12V12z" />
+				</svg>
+			</button>
+			<div id="roundno" title="Number of Focus Rounds"></div>
+			<div id="slider-container">
+				<div id="slider-overlay" class="disabled">
+					<span id="volume-value">80</span>
+					<input type="range" orient="vertical" id="volume-slider" min="0" max="100" step="1" value="80" />
+				</div>
+				<button id="volume-button" title="Adjust White Noise Volume">
+					<svg id="volume-icon" class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+						<path
+							d="M560-131v-82q90-26 145-100t55-168q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 127-78 224.5T560-131ZM120-360v-240h160l200-200v640L280-360H120Zm440 40v-322q47 22 73.5 66t26.5 96q0 51-26.5 94.5T560-320ZM400-606l-86 86H200v80h114l86 86v-252ZM300-480Z"
+						/>
+					</svg>
+					<svg
+						id="volume-muted-icon"
+						class="svg-icon"
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 -960 960 960"
+					>
+						<path
+							xmlns="http://www.w3.org/2000/svg"
+							d="M792-56 671-177q-25 16-53 27.5T560-131v-82q14-5 27.5-10t25.5-12L480-368v208L280-360H120v-240h128L56-792l56-56 736 736-56 56Zm-8-232-58-58q17-31 25.5-65t8.5-70q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 53-14.5 102T784-288ZM650-422l-90-90v-130q47 22 73.5 66t26.5 96q0 15-2.5 29.5T650-422ZM480-592 376-696l104-104v208Zm-80 238v-94l-72-72H200v80h114l86 86Zm-36-130Z"
+						/>
+					</svg>
+				</button>
+			</div>
+			<button id="next" title="Next Round">
+				<svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+					<path d="M12 36l17-12-17-12v24zm20-24v24h4V12h-4z" />
+				</svg>
+			</button>
+		</main>
+		<div id="menu" class="scrollbar">
+			<div class="menu-title">Tomodoro</div>
+			<div class="content">
+				<section class="section">
+					<h2>Timer</h2>
+					<div class="setting">
+						<label for="focus-input">Focus: <span></span></label>
+						<div class="input-holder">
+							<button class="ibtn" id="focus-dec">-</button>
+							<input type="number" name="focus-input" id="focus-input" min="1" max="180" />
+							<button class="ibtn" id="focus-inc">+</button>
+							minutes
+						</div>
+					</div>
+					<div class="setting">
+						<label for="short-input">Short Break: <span></span></label>
+						<div class="input-holder">
+							<button class="ibtn" id="short-dec">-</button>
+							<input type="number" name="short-input" id="short-input" min="1" max="180" />
+							<button class="ibtn" id="short-inc">+</button>
+							minutes
+						</div>
+					</div>
+					<div class="setting">
+						<label for="long-input">Long Break: <span></span></label>
+						<div class="input-holder">
+							<button class="ibtn" id="long-dec">-</button>
+							<input type="number" name="long-input" id="long-input" min="1" max="180" />
+							<button class="ibtn" id="long-inc">+</button>
+							minutes
+						</div>
+					</div>
+					<div class="setting">
+						<label for="rounds-input">Rounds</label>
+						<br />
+						Number of focus sessions between long breaks.
+						<div class="input-holder">
+							<button class="ibtn" id="rounds-dec">-</button>
+							<input type="number" name="rounds-input" id="rounds-input" min="1" max="18" />
+							<button class="ibtn" id="rounds-inc">+</button>
+							rounds
+						</div>
+					</div>
+				</section>
+				<section class="section">
+					<h2>Appearance</h2>
+					<div class="setting">
+						<label for="theme-select">Theme:</label>
+						<select name="theme" id="theme-select" title="Theme">
+							<option value="dark" id="t-dark" selected>Dark</option>
+							<option value="black" id="t-black">Black</option>
+							<option value="light" id="t-light">Light</option>
+							<option value="white" id="t-white">White</option>
+						</select>
+					</div>
+					<div class="setting" id="accents">
+						<h3>Accent Color:</h3>
+						<div id="colors"></div>
+					</div>
+				</section>
+				<section class="section">
+					<h2>Sounds & Notifications</h2>
+					<div class="setting">
+						<label for="notif-select">Notifications:</label>
+						<select name="notif" id="notif-select" title="Notification Type">
+							<option value="enabled">Enabled</option>
+							<option value="silent">Silent</option>
+							<option value="disabled">Disabled</option>
+						</select>
+						<br /><br />
+						Make sure that your browser allows notifications from this site.
+					</div>
+					<div class="setting">
+						<label for="audio-select">White Noise:</label>
+						<select name="audio" id="audio-select" title="Notification Type">
+							<option value="disabled" selected>Disabled</option>
+							<option value="noise">Enabled</option>
+						</select>
+						<br /><br />
+						If enabled, white noise will be played during focus sessions. Make sure that your browser allows
+						sound from this site.
+					</div>
+				</section>
+			</div>
+		</div>
+		<div id="statistics" class="scrollbar">
+			<div class="menu-title">
+				Statistics
+				<button id="closestats" class="crossbtn" title="Close Statistics"></button>
+			</div>
+			<div class="content">
+				<div class="setting">
+					<h3>Show Statistics of:</h3>
+					<div id="filters" class="scrollbar">
+						<label class="task-chip">
+							<input type="checkbox" id="all" checked />
+							<span class="chip-task-name">All Tasks</span>
+						</label>
+					</div>
+				</div>
+				<div class="setting">
+					<label for="stat-time-select">Time Period: </label>
+					<select id="stat-time-select">
+						<option value="0">Today</option>
+						<option value="1">Past Day</option>
+						<option value="7" selected>Past Week</option>
+						<option value="365">Past Year</option>
+						<option value="all">All Time</option>
+					</select>
+				</div>
+				<br /><br />
+				<h2>Overview</h2>
+				<div id="stat-summary" class="remark">
+					You focused for a total duration of
+					<span id="stat-summary-total"></span>
+					consisting of
+					<span id="stat-summary-rounds"></span>
+					Focus Rounds with an average round duration of
+					<span id="stat-summary-average"></span>
+					<br /><br />
+					Shortest round duration: <span id="stat-summary-shortest"></span>
+					<br />
+					Longest round duration: <span id="stat-summary-longest"></span>
+				</div>
+				<h2>Time Distribution:</h2>
+				<div id="pie-container">
+					<div id="pie">
+						<svg viewbox="0 0 120 120"></svg>
+					</div>
+					<div id="pie-card-container" class="scrollbar"></div>
+				</div>
+				<h2>Time Spent per Task:</h2>
+				<div id="timespent" class="stat-chart scrollbar"></div>
+				<br /><br />
+				<h2>Time Spent per 6 Hours:</h2>
+				<div id="timesixhourly" class="stat-chart scrollbar">
+					<div class="task-bar-container">
+						<div class="legend">00:00 - 06:00</div>
+						<div class="bar-container">
+							<div class="bar" id="hourly-0-6">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">06:00 - 12:00</div>
+						<div class="bar-container">
+							<div class="bar" id="hourly-6-12">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">12:00 - 18:00</div>
+						<div class="bar-container">
+							<div class="bar" id="hourly-12-18">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">18:00 - 24:00</div>
+						<div class="bar-container">
+							<div class="bar" id="hourly-18-24">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="remark-hourly" class="remark">
+					You were most productive between <span class="remark-value"></span>
+				</div>
+				<h2>Time Spent per Day:</h2>
+				<div id="timedaily" class="stat-chart scrollbar">
+					<div class="task-bar-container">
+						<div class="legend">Monday</div>
+						<div class="bar-container">
+							<div class="bar" id="day-monday">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">Tuesday</div>
+						<div class="bar-container">
+							<div class="bar" id="day-tuesday">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">Wednesday</div>
+						<div class="bar-container">
+							<div class="bar" id="day-wednesday">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">Thursday</div>
+						<div class="bar-container">
+							<div class="bar" id="day-thursday">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">Friday</div>
+						<div class="bar-container">
+							<div class="bar" id="day-friday">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">Saturday</div>
+						<div class="bar-container">
+							<div class="bar" id="day-saturday">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">Sunday</div>
+						<div class="bar-container">
+							<div class="bar" id="day-sunday">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="remark-daily" class="remark">
+					You were most productive on <span class="remark-value"></span>
+				</div>
+				<h2>Time Spent per Month:</h2>
+				<div id="timemonthly" class="stat-chart scrollbar">
+					<div class="task-bar-container">
+						<div class="legend">January</div>
+						<div class="bar-container">
+							<div class="bar" id="month-january">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">February</div>
+						<div class="bar-container">
+							<div class="bar" id="month-february">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">March</div>
+						<div class="bar-container">
+							<div class="bar" id="month-march">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">April</div>
+						<div class="bar-container">
+							<div class="bar" id="month-april">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">May</div>
+						<div class="bar-container">
+							<div class="bar" id="month-may">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">June</div>
+						<div class="bar-container">
+							<div class="bar" id="month-june">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">July</div>
+						<div class="bar-container">
+							<div class="bar" id="month-july">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">August</div>
+						<div class="bar-container">
+							<div class="bar" id="month-august">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">September</div>
+						<div class="bar-container">
+							<div class="bar" id="month-september">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">October</div>
+						<div class="bar-container">
+							<div class="bar" id="month-october">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">November</div>
+						<div class="bar-container">
+							<div class="bar" id="month-november">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+					<div class="task-bar-container">
+						<div class="legend">December</div>
+						<div class="bar-container">
+							<div class="bar" id="month-december">
+								<div class="stat-value">21:11</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="remark-monthly" class="remark">
+					You were most productive in <span class="remark-value"></span>
+				</div>
+				<details id="stat-details">
+					<summary><h2>Focus Round Records</h2></summary>
+					<div id="round-entries"></div>
+				</details>
+			</div>
+		</div>
+		<div id="managetasks" class="scrollbar">
+			<div class="menu-title">
+				Tasks
+				<button id="closetasks" class="crossbtn" title="Return to main screen"></button>
+			</div>
+			<div class="content">
+				<h2>Your Tasks</h2>
+				Here you can manage your tasks.
+				<br /><br />
+				<div id="task-container"></div>
+				<form id="newtask" class="task">
+					<input
+						id="new-task-name"
+						name="taskname"
+						type="text"
+						min="1"
+						maxlength="25"
+						placeholder="Add New Task"
+					/>
+					<button type="submit" title="Create new task" class="crossbtn" id="new-task-btn"></button>
+				</form>
+			</div>
+		</div>
+		<div id="firstload">
+			<div id="firstloadcontent">
+				<h2>Welcome to Tomodoro!</h2>
+				Tomodoro is an open source pomodoro web app with cool features like white noise, tasks,
+				statistics and offline support.
+				<br /><br /><br />
+				<h2>What's New</h2>
+				<ul id="new-list">
+					<li>
+						<h3>Tasks & Statistics</h3>
+						<div class="whats-new-desc">
+							You can now create tasks and track the time spent focusing on these tasks. All the data is
+							stored in your browser.
+						</div>
+					</li>
+					<li>
+						<h3>White Noise</h3>
+						<div class="whats-new-desc">You can now listen to white noise during focus rounds.</div>
+					</li>
+				</ul>
+				<br /><br />
+			</div>
+			<button id="closeintro" class="hover-shadow">Let's Get Started!</button>
+		</div>
+		<script src="./scripts/main.js?v=6"></script>
+		<script type="module" src="./scripts/timer.js?v=6"></script>
+		<script type="module" src="./scripts/profile_settings/timer_durations.js?v=6"></script>		
+
+		<script type="module" src="./scripts/profile_settings/stats.js?v=6"></script>
+		<script type="module" src="./scripts/view.js?v=6"></script>
+
+		<script src="./scripts/profile_settings/ui_settings.js?v=6"></script>
+		<script src="./scripts/profile_settings/audio.js?v=6"></script>
+	</body>
+</html>
